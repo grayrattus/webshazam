@@ -1,0 +1,4 @@
+./xvfb-run-safe.sh ./webshazam -d 10 -s ~/here1.png -u 'https://next--storybookjs.netlify.app/official-storybook/iframe.html?id=addons-backgrounds--with-gradient&args=&viewMode=story'&
+./xvfb-run-safe.sh ./webshazam -d 10 -s ~/here2.png -u 'https://next--storybookjs.netlify.app/official-storybook/iframe.html?id=addons-backgrounds--with-gradient&args=&viewMode=story'&
+./xvfb-run-safe.sh ./webshazam -d 10 -s ~/here3.png -u 'https://next--storybookjs.netlify.app/official-storybook/iframe.html?id=addons-backgrounds--with-gradient&args=&viewMode=story'&
+./xvfb-run-safe.sh ./webshazam -d 10 -s ~/here4.png -u 'https://next--storybookjs.netlify.app/official-storybook/iframe.html?id=addons-backgrounds--with-gradient&args=&viewMode=story'&
