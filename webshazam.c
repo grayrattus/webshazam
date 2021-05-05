@@ -30,7 +30,6 @@ getScreenshotFunction(GObject *object,
     GError* error = NULL;
 	cairo_surface_t* surface = webkit_web_view_get_snapshot_finish(webview, result, &error);
 	cairo_surface_write_to_png(surface, screenshotFullPath);
-    exit(0);
 }
 
 static int startScreenshot(gpointer webView) {
