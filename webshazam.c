@@ -8,7 +8,6 @@
 #include <webkit2/webkit2.h>
 
 
-static gint delaySec = 2;
 static gchar* url;
 static gchar* screenshotFullPath;
 
@@ -16,7 +15,6 @@ static GOptionEntry entries[] =
 {
   { "url", 'u', -1, G_OPTION_ARG_STRING, &url, "Url of website", NULL },
   { "screenshotFullPath", 's', -1, G_OPTION_ARG_STRING, &screenshotFullPath, "Full path of where screenshot should be saved", NULL },
-  { "delay", 'd', -1, G_OPTION_ARG_INT, &delaySec, "Delay to take screenshot in seconds", NULL },
   { NULL }
 };
 
@@ -29,17 +27,26 @@ getScreenshotFunction(GObject *object,
     WebKitWebView * webview = (WebKitWebView*)data;
     GError* error = NULL;
 	cairo_surface_t* surface = webkit_web_view_get_snapshot_finish(webview, result, &error);
+    printf("Writing screenshot to: %s", screenshotFullPath);
 	cairo_surface_write_to_png(surface, screenshotFullPath);
+    gtk_main_quit();
+    
 }
 
 static int startScreenshot(gpointer webView) {
-    webkit_web_view_get_snapshot((WebKitWebView*)webView,
-                                 WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT,
-                                 WEBKIT_SNAPSHOT_OPTIONS_NONE,
-                                 NULL,
-                                 getScreenshotFunction,
-                                 (WebKitWebView*)webView);
-    return 0;
+    printf("Waiting for load: %f\n", webkit_web_view_get_estimated_load_progress((WebKitWebView*)webView));
+
+    if (webkit_web_view_get_estimated_load_progress((WebKitWebView*)webView) == 1) {
+        webkit_web_view_get_snapshot((WebKitWebView *)webView,
+                                     WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT,
+                                     WEBKIT_SNAPSHOT_OPTIONS_NONE,
+                                     NULL,
+                                     getScreenshotFunction,
+                                     (WebKitWebView *)webView);
+                                     return 0;
+    }
+
+    return -1;
 }
 
 int main(int argc, char* argv[])
@@ -55,6 +62,10 @@ int main(int argc, char* argv[])
         g_print("option parsing failed: %s\n", error->message);
         exit(1);
     }
+
+    g_print("Run with arguments:\n");
+    g_print("url: %s\n", url);
+    g_print("screenshotFullPath: %s\n", screenshotFullPath);
 
     gtk_init(&argc, &argv);
 
@@ -73,7 +84,7 @@ int main(int argc, char* argv[])
     gtk_widget_grab_focus(GTK_WIDGET(webView));
     gtk_widget_show_all(main_window);
 
-    g_timeout_add_seconds(5, startScreenshot, webView);
+    g_timeout_add_seconds(1, startScreenshot, webView);
 
     gtk_main();
 
